@@ -5,3 +5,17 @@
 /.idea/
 /.settings/*
 dependency-reduced-pom.xml
+
+# Temporary & Build artifacts
+*.class
+*.jar
+*.zip
+*.txt
+*.py
+Dump.java
+Extractor.java
+SlimefunItemStack.java
+TestCast*.java
+jdk-21.0.2/
+apache-maven-3.9.6/
+.vscode/
