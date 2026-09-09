@@ -14,18 +14,18 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.LuckLevel;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.Surprise;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+
 
 public final class BryanZombieSurprise implements Surprise {
 
     private final ItemStack axe;
 
     public BryanZombieSurprise() {
-        axe = new CustomItemStack(Material.GOLDEN_AXE, "&e&lLucky Axe");
-        axe.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 10);
-        axe.addUnsafeEnchantment(Enchantment.DIG_SPEED, 10);
-        axe.addUnsafeEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 10);
-        axe.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+        axe = io.github.thebusybiscuit.slimefunluckyblocks.ItemHelper.create(Material.GOLDEN_AXE, "&e&lLucky Axe");
+        axe.addUnsafeEnchantment(Enchantment.SHARPNESS, 3);
+        axe.addUnsafeEnchantment(Enchantment.EFFICIENCY, 3);
+        axe.addUnsafeEnchantment(Enchantment.FORTUNE, 3);
+        axe.addUnsafeEnchantment(Enchantment.UNBREAKING, 3);
     }
 
     @Override
@@ -51,3 +51,5 @@ public final class BryanZombieSurprise implements Surprise {
     }
 
 }
+
+

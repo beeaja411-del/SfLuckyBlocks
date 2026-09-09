@@ -5,23 +5,23 @@ import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.LuckLevel;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.Surprise;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+
 
 public final class LuckySwordSurprise implements Surprise {
 	
 	private final ItemStack sword;
 	
 	public LuckySwordSurprise() {
-		sword = new CustomItemStack(Material.GOLDEN_SWORD, "&e&lLucky Sword");
-		sword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 10);
-		sword.addUnsafeEnchantment(Enchantment.LOOT_BONUS_MOBS, 10);
-		sword.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-		sword.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 5);
+		sword = io.github.thebusybiscuit.slimefunluckyblocks.ItemHelper.create(Material.IRON_SWORD, "&e&lLucky Sword");
+		sword.addUnsafeEnchantment(Enchantment.SHARPNESS, 2);
+		sword.addUnsafeEnchantment(Enchantment.UNBREAKING, 3);
+		sword.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 1);
 	}
 	
 	@Override
@@ -40,3 +40,7 @@ public final class LuckySwordSurprise implements Surprise {
 	}
 
 }
+
+
+
+

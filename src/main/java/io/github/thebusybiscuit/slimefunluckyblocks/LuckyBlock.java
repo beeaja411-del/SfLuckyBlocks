@@ -25,6 +25,7 @@ public class LuckyBlock extends SlimefunItem {
 
     private Collection<Surprise> surprises;
     private Predicate<Surprise> predicate;
+    private List<Surprise> cachedSurprises;
 
     public LuckyBlock(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(itemGroup, item, recipeType, recipe);
@@ -37,20 +38,27 @@ public class LuckyBlock extends SlimefunItem {
 
             @Override
             public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
-                Random random = ThreadLocalRandom.current();
-                List<Surprise> luckySurprises = surprises.stream().filter(predicate).collect(Collectors.toList());
+                e.setDropItems(false);
+                drops.clear();
+                
+                if (cachedSurprises == null) {
+                    cachedSurprises = surprises.stream().filter(predicate).collect(Collectors.toList());
+                }
 
+                Random random = ThreadLocalRandom.current();
                 Player p = e.getPlayer();
                 Location loc = e.getBlock().getLocation();
-                luckySurprises.get(random.nextInt(luckySurprises.size())).activate(random, p, loc);
+                Surprise surprise = cachedSurprises.get(random.nextInt(cachedSurprises.size()));
+                p.sendMessage(org.bukkit.ChatColor.GOLD + "You just got an event: " + org.bukkit.ChatColor.YELLOW + surprise.getName() + org.bukkit.ChatColor.GOLD + "!");
+                surprise.activate(random, p, loc);
             }
         };
     }
 
     @Override
     public Collection<ItemStack> getDrops() {
-        // Disable any drops from Lucky blocks (Air is not dropped but still counts as "overridden drops")
-        return Arrays.asList(new ItemStack(Material.AIR));
+        // Disable any drops from Lucky blocks
+        return new java.util.ArrayList<>();
     }
 
     public void register(SlimefunLuckyBlocks plugin, Collection<Surprise> surprises, Predicate<Surprise> predicate) {

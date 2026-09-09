@@ -1,5 +1,6 @@
 package io.github.thebusybiscuit.slimefunluckyblocks;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,12 +33,15 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.common.CommonPatterns;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.GitHubBuildsUpdater;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.CustomItemSurprise;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.LuckLevel;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.Surprise;
+import io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.DiamondLuckySurprise;
+import io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.DiamondUnluckySurprise;
+import io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.DiamondVeryLuckySurprise;
+import io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.DiamondVeryUnluckySurprise;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.lucky.CakeSurprise;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.lucky.CookedFoodSurprise;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.lucky.DiamondBlockPillarSurprise;
@@ -45,7 +49,6 @@ import io.github.thebusybiscuit.slimefunluckyblocks.surprises.lucky.DiamondBlock
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.lucky.EmeraldBlockSurprise;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.lucky.GoldenAppleSurprise;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.lucky.IronBlockSurprise;
-import io.github.thebusybiscuit.slimefunluckyblocks.surprises.lucky.LuckyAxeSurprise;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.lucky.LuckyBootsSurprise;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.lucky.LuckyChestplateSurprise;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.lucky.LuckyHelmetSurprise;
@@ -91,7 +94,7 @@ import io.github.thebusybiscuit.slimefunluckyblocks.surprises.unlucky.WitchSurpr
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.unlucky.ZombiePigmenSurprise;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
-public class SlimefunLuckyBlocks extends JavaPlugin implements SlimefunAddon {
+public class SlimefunLuckyBlocks extends JavaPlugin implements SlimefunAddon, org.bukkit.event.Listener {
 
     private static final String TEXTURE = "b3b710b08b523bba7efba07c629ba0895ad61126d26c86beb3845603a97426c";
 
@@ -101,6 +104,7 @@ public class SlimefunLuckyBlocks extends JavaPlugin implements SlimefunAddon {
 
     @Override
     public void onEnable() {
+        getServer().getPluginManager().registerEvents(this, this);
         cfg = new Config(this);
 
         // Setting up bStats
@@ -110,7 +114,7 @@ public class SlimefunLuckyBlocks extends JavaPlugin implements SlimefunAddon {
             new GitHubBuildsUpdater(this, getFile(), "TheBusyBiscuit/luckyblocks-sf/master").start();
         }
 
-        ItemGroup itemGroup = new ItemGroup(new NamespacedKey(this, "lucky_blocks"), new CustomItemStack(PlayerHead.getItemStack(PlayerSkin.fromHashCode(TEXTURE)), "&rLucky Blocks"));
+        ItemGroup itemGroup = new ItemGroup(new NamespacedKey(this, "lucky_blocks"), ItemHelper.createTexturedHead(TEXTURE, "&rLucky Blocks"));
 
         SlimefunItemStack luckyBlock = new SlimefunItemStack("LUCKY_BLOCK", TEXTURE, "&fLucky Block", "&7Luck: &f0");
         SlimefunItemStack veryLuckyBlock = new SlimefunItemStack("LUCKY_BLOCK_LUCKY", TEXTURE, "&fVery lucky Block", "&7Luck: &a+80");
@@ -118,17 +122,35 @@ public class SlimefunLuckyBlocks extends JavaPlugin implements SlimefunAddon {
         SlimefunItemStack pandorasBox = new SlimefunItemStack("PANDORAS_BOX", "86c7dde512871bd607b77e6635ad39f44f2d5b4729e60273f1b14fba9a86a", "&5Pandora\"s Box", "&7Luck: &c&oERROR");
 
         // @formatter:off
-        new LuckyBlock(itemGroup, luckyBlock, RecipeType.ENHANCED_CRAFTING_TABLE,
-        new ItemStack[] { SlimefunItems.GOLD_12K, SlimefunItems.GOLD_12K, SlimefunItems.GOLD_12K, SlimefunItems.GOLD_12K, new ItemStack(Material.DISPENSER), SlimefunItems.GOLD_12K, SlimefunItems.GOLD_12K, SlimefunItems.GOLD_12K, SlimefunItems.GOLD_12K }).register(this, surprises, s -> s.getLuckLevel() != LuckLevel.PANDORA);
+        new LuckyBlock(itemGroup, luckyBlock, RecipeType.NULL,
+        new ItemStack[0]).register(this, surprises, s -> s.getLuckLevel() == LuckLevel.LUCKY || s.getLuckLevel() == LuckLevel.UNLUCKY || s.getLuckLevel() == LuckLevel.NEUTRAL);
 
-        new LuckyBlock(itemGroup, veryLuckyBlock, RecipeType.ENHANCED_CRAFTING_TABLE,
-        new ItemStack[] { null, SlimefunItems.GOLD_12K, null, SlimefunItems.GOLD_12K, luckyBlock, SlimefunItems.GOLD_12K, null, SlimefunItems.GOLD_12K, null }).register(this, surprises, s -> s.getLuckLevel() == LuckLevel.LUCKY);
+        new LuckyBlock(itemGroup, veryLuckyBlock, RecipeType.NULL,
+        new ItemStack[0]).register(this, surprises, s -> s.getLuckLevel() == LuckLevel.LUCKY);
 
-        new LuckyBlock(itemGroup, veryUnluckyBlock, RecipeType.ENHANCED_CRAFTING_TABLE,
-        new ItemStack[] { null, new ItemStack(Material.SPIDER_EYE), null, new ItemStack(Material.SPIDER_EYE), luckyBlock, new ItemStack(Material.SPIDER_EYE), null, new ItemStack(Material.SPIDER_EYE), null }).register(this, surprises, s -> s.getLuckLevel() == LuckLevel.UNLUCKY);
+        SlimefunItemStack diamondLuckyBlock = new SlimefunItemStack("LUCKY_BLOCK_DIAMOND", ItemHelper.createTexturedHead(TEXTURE, "&bDiamond Lucky Block"), "&bDiamond Lucky Block", "&7Luck: &b100");
+        SlimefunItemStack diamondVeryLuckyBlock = new SlimefunItemStack("LUCKY_BLOCK_DIAMOND_VERY", ItemHelper.createTexturedHead(TEXTURE, "&bDiamond Very Lucky Block"), "&bDiamond Very Lucky Block", "&7Luck: &b150");
 
-        new LuckyBlock(itemGroup, pandorasBox, RecipeType.ENHANCED_CRAFTING_TABLE,
-        new ItemStack[] { new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.LAPIS_BLOCK), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.LAPIS_BLOCK), luckyBlock, new ItemStack(Material.LAPIS_BLOCK), new ItemStack(Material.OAK_PLANKS), new ItemStack(Material.LAPIS_BLOCK), new ItemStack(Material.OAK_PLANKS) }).register(this, surprises, s -> s.getLuckLevel() == LuckLevel.PANDORA);
+        new LuckyBlock(itemGroup, diamondLuckyBlock, RecipeType.NULL,
+        new ItemStack[0]).register(this, surprises, s -> s.getLuckLevel() == LuckLevel.DIAMOND_LUCKY || s.getLuckLevel() == LuckLevel.DIAMOND_UNLUCKY);
+
+        new LuckyBlock(itemGroup, diamondVeryLuckyBlock, RecipeType.NULL,
+        new ItemStack[0]).register(this, surprises, s -> s.getLuckLevel() == LuckLevel.DIAMOND_VERY_LUCKY || s.getLuckLevel() == LuckLevel.DIAMOND_VERY_UNLUCKY);
+
+        new LuckyBlock(itemGroup, veryUnluckyBlock, RecipeType.NULL,
+        new ItemStack[0]).register(this, surprises, s -> s.getLuckLevel() == LuckLevel.UNLUCKY);
+
+        new LuckyBlock(itemGroup, pandorasBox, RecipeType.NULL,
+        new ItemStack[0]).register(this, surprises, s -> s.getLuckLevel() == LuckLevel.PANDORA);
+
+        // --- Custom SlimeLuckyBlock ---
+        // TODO: Replace this texture hash with the exact one from minecraft-heads.com
+        String slimeTexture = "b3b710b08b523bba7efba07c629ba0895ad61126d26c86beb3845603a97426c"; 
+        ItemGroup slimeItemGroup = new ItemGroup(new NamespacedKey(this, "slime_lucky_blocks"), ItemHelper.createTexturedHead(slimeTexture, "&aSlime Lucky Blocks"));
+        SlimefunItemStack slimeLuckyBlockItem = new SlimefunItemStack("LUCKY_BLOCK_SLIME", ItemHelper.createTexturedHead(slimeTexture, "&aSlime Lucky Block"), "&aSlime Lucky Block", "&7A custom lucky block!");
+        
+        new SlimeLuckyBlock(slimeItemGroup, slimeLuckyBlockItem, RecipeType.NULL,
+        new ItemStack[0]).register(this);
         // @formatter:on
 
         new WorldGenerator(this);
@@ -137,6 +159,19 @@ public class SlimefunLuckyBlocks extends JavaPlugin implements SlimefunAddon {
         registerCustomSurprises();
 
         getLogger().log(Level.INFO, "Loaded {0} different Surprises!", surprises.size());
+
+        getCommand("testdiamondrain").setExecutor((sender, command, label, args) -> {
+            if (sender instanceof org.bukkit.entity.Player) {
+                org.bukkit.entity.Player p = (org.bukkit.entity.Player) sender;
+                java.util.List<Surprise> diamondSurprises = surprises.stream().filter(s -> s.getLuckLevel() == LuckLevel.DIAMOND_VERY_LUCKY || s.getLuckLevel() == LuckLevel.DIAMOND_VERY_UNLUCKY).collect(java.util.stream.Collectors.toList());
+                if (!diamondSurprises.isEmpty()) {
+                    Surprise s = diamondSurprises.get(java.util.concurrent.ThreadLocalRandom.current().nextInt(diamondSurprises.size()));
+                    p.sendMessage(org.bukkit.ChatColor.GOLD + "You just got an event: " + org.bukkit.ChatColor.YELLOW + s.getName() + org.bukkit.ChatColor.GOLD + "!");
+                    s.activate(java.util.concurrent.ThreadLocalRandom.current(), p, p.getLocation());
+                }
+            }
+            return true;
+        });
     }
 
     private void registerDefaultSurprises() {
@@ -152,7 +187,6 @@ public class SlimefunLuckyBlocks extends JavaPlugin implements SlimefunAddon {
         registerSurprise(new ValuablesSurprise());
         registerSurprise(new LuckySwordSurprise());
         registerSurprise(new LuckyPickaxeSurprise());
-        registerSurprise(new LuckyAxeSurprise());
         registerSurprise(new XPRainSurprise());
         registerSurprise(new LuckyHelmetSurprise());
         registerSurprise(new LuckyChestplateSurprise());
@@ -198,6 +232,35 @@ public class SlimefunLuckyBlocks extends JavaPlugin implements SlimefunAddon {
         // Pandora Box Surprises
         registerSurprise(new ReapersSurprise());
         registerSurprise(new IronGolemsSurprise());
+
+        // Diamond Surprises (Registered twice to make Money Rain rarer)
+        registerSurprise(new DiamondLuckySurprise());
+        registerSurprise(new DiamondLuckySurprise());
+        
+        registerSurprise(new DiamondUnluckySurprise());
+        registerSurprise(new DiamondUnluckySurprise());
+        
+        registerSurprise(new DiamondVeryLuckySurprise());
+        registerSurprise(new DiamondVeryLuckySurprise());
+        
+        registerSurprise(new DiamondVeryUnluckySurprise());
+        registerSurprise(new DiamondVeryUnluckySurprise());
+        
+        registerSurprise(new io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.TNTRainSurprise(LuckLevel.DIAMOND_UNLUCKY));
+        registerSurprise(new io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.TNTRainSurprise(LuckLevel.DIAMOND_UNLUCKY));
+        
+        registerSurprise(new io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.TNTRainSurprise(LuckLevel.DIAMOND_VERY_UNLUCKY));
+        registerSurprise(new io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.TNTRainSurprise(LuckLevel.DIAMOND_VERY_UNLUCKY));
+        
+        registerSurprise(new io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.DiamondSlimefunRainSurprise(LuckLevel.DIAMOND_LUCKY));
+        registerSurprise(new io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.DiamondSlimefunRainSurprise(LuckLevel.DIAMOND_LUCKY));
+        
+        registerSurprise(new io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.DiamondSlimefunRainSurprise(LuckLevel.DIAMOND_VERY_LUCKY));
+        registerSurprise(new io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.DiamondSlimefunRainSurprise(LuckLevel.DIAMOND_VERY_LUCKY));
+
+        // Money Rain registered only ONCE to make it rarer
+        registerSurprise(new io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.MoneyRainSurprise(LuckLevel.DIAMOND_LUCKY));
+        registerSurprise(new io.github.thebusybiscuit.slimefunluckyblocks.surprises.diamond.MoneyRainSurprise(LuckLevel.DIAMOND_VERY_LUCKY));
     }
 
     private void registerCustomSurprises() {
@@ -339,7 +402,7 @@ public class SlimefunLuckyBlocks extends JavaPlugin implements SlimefunAddon {
         });
 
         b.setBlockData(data);
-        PlayerHead.setSkin(b, PlayerSkin.fromHashCode(TEXTURE), true);
+        ItemHelper.setBlockSkin(b, TEXTURE);
         BlockStorage.store(b, "LUCKY_BLOCK");
 
         if (getCfg().getBoolean("debug")) {
@@ -351,6 +414,26 @@ public class SlimefunLuckyBlocks extends JavaPlugin implements SlimefunAddon {
         return cfg;
     }
 
+    private ItemStack toItemStack(Object obj) {
+        if (obj == null) return null;
+        
+        if (obj instanceof ItemStack) {
+            return ((ItemStack) obj).clone();
+        }
+        
+        try {
+            // Support for newer/unofficial Slimefun versions where SlimefunItemStack no longer extends ItemStack
+            Method m = obj.getClass().getMethod("item");
+            ItemStack item = (ItemStack) m.invoke(obj);
+            if (item != null) {
+                return item.clone();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     public JavaPlugin getJavaPlugin() {
         return this;
@@ -359,6 +442,13 @@ public class SlimefunLuckyBlocks extends JavaPlugin implements SlimefunAddon {
     @Override
     public String getBugTrackerURL() {
         return "https://github.com/TheBusyBiscuit/luckyblocks-sf/issues";
+    }
+
+    @org.bukkit.event.EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST)
+    public void onEntityExplode(org.bukkit.event.entity.EntityExplodeEvent e) {
+        if (e.getEntity() != null && e.getEntity().hasMetadata("luckyblock_bypasstnt")) {
+            e.setCancelled(false);
+        }
     }
 
 }

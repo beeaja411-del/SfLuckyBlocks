@@ -15,20 +15,19 @@ import org.bukkit.potion.PotionEffectType;
 
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.LuckLevel;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.Surprise;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
+
+import io.github.thebusybiscuit.slimefunluckyblocks.ItemHelper;
 
 public final class ReapersSurprise implements Surprise {
 
     private final ItemStack hoe;
 
     public ReapersSurprise() {
-        hoe = new CustomItemStack(Material.GOLDEN_HOE, "&e&lLucky Hoe");
-        hoe.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 10);
-        hoe.addUnsafeEnchantment(Enchantment.LOOT_BONUS_MOBS, 10);
-        hoe.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 5);
-        hoe.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+        hoe = io.github.thebusybiscuit.slimefunluckyblocks.ItemHelper.create(Material.GOLDEN_HOE, "&e&lLucky Hoe");
+        hoe.addUnsafeEnchantment(Enchantment.SHARPNESS, 3);
+        hoe.addUnsafeEnchantment(Enchantment.LOOTING, 3);
+        hoe.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 1);
+        hoe.addUnsafeEnchantment(Enchantment.UNBREAKING, 3);
     }
 
     @Override
@@ -43,7 +42,7 @@ public final class ReapersSurprise implements Surprise {
             zombie.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(120D);
             zombie.setHealth(120D);
 
-            zombie.getEquipment().setHelmet(PlayerHead.getItemStack(PlayerSkin.fromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTkzN2FmMjYzMzI2ZTJiNDA5MDQyNzFiODMxYzNiMTc2ZWEyMWYwMTg2YmZhZjRlMTZlZWUxZTI4OWRkYWQ4In19fQ==")));
+            zombie.getEquipment().setHelmet(ItemHelper.createTexturedHead("5937af263326e2b40904271b831c3b176ea21f0186bfaf4e16eee1e289ddad8", "Reaper"));
             zombie.getEquipment().setHelmetDropChance(0F);
 
             zombie.getEquipment().setItemInMainHand(hoe.clone());
@@ -51,7 +50,7 @@ public final class ReapersSurprise implements Surprise {
             zombie.setCanPickupItems(false);
 
             zombie.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 999999999, 255));
-            zombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 999999999, 1));
+            zombie.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 999999999, 1));
             zombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 999999999, 1));
         }
     }
@@ -62,3 +61,6 @@ public final class ReapersSurprise implements Surprise {
     }
 
 }
+
+
+

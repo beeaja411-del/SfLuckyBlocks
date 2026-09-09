@@ -8,3 +8,7 @@ main: io.github.thebusybiscuit.slimefunluckyblocks.SlimefunLuckyBlocks
 
 depend:
 - Slimefun
+
+commands:
+  testdiamondrain:
+    description: Test Diamond Slimefun Rain event

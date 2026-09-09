@@ -14,20 +14,19 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.LuckLevel;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.Surprise;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
+
+import io.github.thebusybiscuit.slimefunluckyblocks.ItemHelper;
 
 public final class WalshrusSurprise implements Surprise {
 
     private final ItemStack sword;
 
     public WalshrusSurprise() {
-        sword = new CustomItemStack(Material.GOLDEN_SWORD, "&e&lLucky Sword");
-        sword.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 10);
-        sword.addUnsafeEnchantment(Enchantment.LOOT_BONUS_MOBS, 10);
-        sword.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-        sword.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 5);
+        sword = io.github.thebusybiscuit.slimefunluckyblocks.ItemHelper.create(Material.GOLDEN_SWORD, "&e&lLucky Sword");
+        sword.addUnsafeEnchantment(Enchantment.SHARPNESS, 3);
+        sword.addUnsafeEnchantment(Enchantment.LOOTING, 3);
+        sword.addUnsafeEnchantment(Enchantment.UNBREAKING, 3);
+        sword.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 1);
     }
 
     @Override
@@ -41,7 +40,7 @@ public final class WalshrusSurprise implements Surprise {
         zombie.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40D);
         zombie.setHealth(40D);
 
-        zombie.getEquipment().setHelmet(PlayerHead.getItemStack(PlayerSkin.fromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk2NmYwZWJkNzdmMWJjZDY1NmZhMmRjM2VmMDMwM2UyNmE2YTNkZTQ5OGMzOTk5ZDM5ZmRjYWNjNWY1YWQifX19")));
+        zombie.getEquipment().setHelmet(ItemHelper.createTexturedHead("c966f0ebd77f1bcd656fa2dc3ef0303e26a6a3de498c3999d39fdcacc5f5ad", "Walshrus"));
         zombie.getEquipment().setHelmetDropChance(0F);
 
         zombie.getEquipment().setItemInMainHand(sword.clone());
@@ -57,3 +56,5 @@ public final class WalshrusSurprise implements Surprise {
     }
 
 }
+
+

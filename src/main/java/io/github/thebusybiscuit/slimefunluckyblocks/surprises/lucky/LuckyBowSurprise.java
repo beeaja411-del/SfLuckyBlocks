@@ -10,28 +10,27 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.LuckLevel;
 import io.github.thebusybiscuit.slimefunluckyblocks.surprises.Surprise;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 
-public final class LuckyAxeSurprise implements Surprise {
+
+public final class LuckyBowSurprise implements Surprise {
 	
-	private final ItemStack axe;
+	private final ItemStack bow;
 	
-	public LuckyAxeSurprise() {
-		axe = new CustomItemStack(Material.GOLDEN_AXE, "&e&lLucky Axe");
-		axe.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 10);
-		axe.addUnsafeEnchantment(Enchantment.DIG_SPEED, 10);
-		axe.addUnsafeEnchantment(Enchantment.LOOT_BONUS_BLOCKS, 10);
-		axe.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+	public LuckyBowSurprise() {
+		bow = io.github.thebusybiscuit.slimefunluckyblocks.ItemHelper.create(Material.BOW, "&e&lLucky Bow");
+		bow.addUnsafeEnchantment(Enchantment.POWER, 2);
+		bow.addUnsafeEnchantment(Enchantment.UNBREAKING, 3);
+		bow.addUnsafeEnchantment(Enchantment.PUNCH, 1);
 	}
 	
 	@Override
 	public String getName() {
-		return "Lucky Axe";
+		return "Lucky Bow";
 	}
 
 	@Override
 	public void activate(Random random, Player p, Location l) {
-		l.getWorld().dropItemNaturally(l, axe.clone());
+		l.getWorld().dropItemNaturally(l, bow.clone());
 	}
 
 	@Override

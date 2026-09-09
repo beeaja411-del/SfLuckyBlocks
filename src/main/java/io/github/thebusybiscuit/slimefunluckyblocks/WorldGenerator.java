@@ -8,8 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.world.ChunkPopulateEvent;
-
+    
 public class WorldGenerator implements Listener {
 
     private final SlimefunLuckyBlocks plugin;
@@ -25,7 +24,11 @@ public class WorldGenerator implements Listener {
     }
 
     @EventHandler
-    public void onRandomSpawn(ChunkPopulateEvent e) {
+    public void onRandomSpawn(org.bukkit.event.world.ChunkLoadEvent e) {
+        if (!e.isNewChunk()) {
+            return;
+        }
+        
         if (blacklist.contains(e.getWorld().getName())) {
             return;
         }
